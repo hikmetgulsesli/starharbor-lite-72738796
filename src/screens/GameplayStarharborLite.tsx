@@ -12,14 +12,46 @@ import { Fuel, Pause, Ruler, Settings, Shield } from "lucide-react";
 
 export type GameplayStarharborLiteActionId = "pause-1" | "settings-2" | "resume-flight-3";
 
+type GameplayEntity = { lane?: number; position?: number };
+type GameplayRuntime = {
+  player?: GameplayEntity;
+  obstacles?: GameplayEntity[];
+  shards?: GameplayEntity[];
+  score?: number;
+  energy?: number;
+  lives?: number;
+  paused?: boolean;
+};
+
 export interface GameplayStarharborLiteProps {
   actions?: Partial<Record<GameplayStarharborLiteActionId, () => void>>;
-  runtime?: { player?: { lane?: number; position?: number }; obstacles?: Array<{ lane?: number; position?: number }>; shards?: Array<{ lane?: number; position?: number }>; score?: number; energy?: number; lives?: number; paused?: boolean };
+  runtime?: GameplayRuntime;
 
 }
 
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+function entityStyle(entity: GameplayEntity, fallbackLane: number, fallbackPosition: number) {
+  const lane = clamp(entity.lane ?? fallbackLane, 0, 2);
+  const position = clamp(entity.position ?? fallbackPosition, 8, 92);
+
+  return {
+    left: `${34 + lane * 16}%`,
+    top: `${clamp(100 - position, 12, 78)}%`,
+  };
+}
+
 export function GameplayStarharborLite({ actions, runtime }: GameplayStarharborLiteProps) {
-  void runtime;
+  const score = runtime?.score ?? 0;
+  const energy = clamp(runtime?.energy ?? 100, 0, 100);
+  const lives = clamp(runtime?.lives ?? 3, 0, 3);
+  const distance = Math.max(0, Math.round(score));
+  const shields = Math.round((lives / 3) * 100);
+  const fuelCells = Math.ceil(energy / 20);
+  const shieldCells = Math.ceil(shields / 20);
+  const obstacles = runtime?.obstacles?.length ? runtime.obstacles : [{ lane: 0, position: 88 }, { lane: 2, position: 126 }];
+  const shards = runtime?.shards?.length ? runtime.shards : [{ lane: 1, position: 54 }, { lane: 2, position: 104 }];
+
   return (
     <>
       {/* Background Space Field */}
@@ -31,8 +63,14 @@ export function GameplayStarharborLite({ actions, runtime }: GameplayStarharborL
       <div className="asteroid absolute top-1/4 left-1/4 w-32 h-32 bg-surface-variant/40 backdrop-blur-md rounded-full border border-outline-variant/30 blur-[2px]"></div>
       <div className="asteroid absolute bottom-1/3 right-1/4 w-48 h-48 bg-surface-container/50 backdrop-blur-sm rounded-full border border-surface-tint/10" style={{animationDelay: "-5s", animationDuration: "25s"}}></div>
       <div className="asteroid absolute top-1/2 right-1/3 w-16 h-16 bg-surface-bright/30 backdrop-blur-lg rounded-full border border-outline-variant/50" style={{animationDelay: "-12s", animationDuration: "15s"}}></div>
+      {obstacles.map((obstacle, index) => (
+      <div key={`obstacle-${index}`} className="absolute z-10 w-14 h-14 bg-surface-variant/70 backdrop-blur-sm rounded-full border border-outline-variant/60 shadow-[0_0_24px_rgba(0,0,0,0.55)]" style={entityStyle(obstacle, index % 3, 80 - index * 20)}></div>
+      ))}
+      {shards.map((shard, index) => (
+      <div key={`shard-${index}`} className="absolute z-10 w-5 h-5 rotate-45 bg-secondary-container border border-secondary-container shadow-[0_0_16px_rgba(254,157,0,0.9)]" style={entityStyle(shard, (index + 1) % 3, 54 + index * 18)}></div>
+      ))}
       {/* Player Shuttle (Center) */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-12 h-16 flex flex-col items-center justify-center hud-glow">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-12 h-16 flex flex-col items-center justify-center hud-glow" style={entityStyle(runtime?.player ?? {}, 1, 22)}>
       <div className="w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-b-[32px] border-b-surface-tint"></div>
       <div className="w-8 h-4 bg-primary/80 mt-1 rounded-sm blur-[1px]"></div>
       <div className="w-4 h-6 bg-primary-container blur-[4px] mt-1"></div> {/* Thruster flame */}
@@ -52,7 +90,7 @@ export function GameplayStarharborLite({ actions, runtime }: GameplayStarharborL
       <div className="flex items-center gap-gutter">
       {/* Score Readout */}
       <div className="font-display-score text-display-score text-surface-tint drop-shadow-[0_0_8px_rgba(0,219,231,0.6)] animate-pulse">
-                      12,500
+                      {score.toLocaleString()}
                   </div>
       <div className="flex gap-unit">
       <button className="p-2 text-primary hover:text-primary-container transition-colors active:scale-95 duration-75" type="button" aria-label="Pause" data-action-id="pause-1" onClick={actions?.["pause-1"]}>
@@ -73,7 +111,7 @@ export function GameplayStarharborLite({ actions, runtime }: GameplayStarharborL
       <div className="font-label-mono text-label-mono text-on-surface-variant uppercase text-xs">Distance</div>
       <div className="font-label-mono text-label-mono text-primary flex items-center gap-2">
       <Ruler className="text-sm" aria-hidden={true} focusable="false" />
-                           450m
+                           {distance}m
                        </div>
       </div>
       </div>
@@ -85,14 +123,14 @@ export function GameplayStarharborLite({ actions, runtime }: GameplayStarharborL
       <div className="w-12 h-12 rounded-full border border-secondary-container bg-surface/50 backdrop-blur-md flex items-center justify-center">
       <Fuel className="text-secondary-container" aria-hidden={true} focusable="false" />
       </div>
-      <span className="font-label-mono text-label-mono text-secondary-container">65%</span>
+      <span className="font-label-mono text-label-mono text-secondary-container">{energy}%</span>
       </div>
       {/* Distance (Mobile) */}
       <div className="flex flex-col items-center gap-unit text-primary">
       <div className="w-12 h-12 rounded-full border border-surface-tint/30 bg-surface/50 backdrop-blur-md flex items-center justify-center">
       <Ruler className="text-primary" aria-hidden={true} focusable="false" />
       </div>
-      <span className="font-label-mono text-label-mono text-primary">450m</span>
+      <span className="font-label-mono text-label-mono text-primary">{distance}m</span>
       </div>
       </nav>
       {/* Desktop Bottom HUD (Fuel & Shields) */}
@@ -103,14 +141,12 @@ export function GameplayStarharborLite({ actions, runtime }: GameplayStarharborL
       <span className="font-label-mono text-label-mono text-secondary-container flex items-center gap-1">
       <Fuel className="text-sm" aria-hidden={true} focusable="false" /> FUEL
                       </span>
-      <span className="font-label-mono text-label-mono text-secondary-container">65%</span>
+      <span className="font-label-mono text-label-mono text-secondary-container">{energy}%</span>
       </div>
       <div className="flex gap-1 h-2">
-      <div className="flex-1 bg-secondary-container rounded-sm shadow-[0_0_8px_rgba(254,157,0,0.6)]"></div>
-      <div className="flex-1 bg-secondary-container rounded-sm shadow-[0_0_8px_rgba(254,157,0,0.6)]"></div>
-      <div className="flex-1 bg-secondary-container rounded-sm shadow-[0_0_8px_rgba(254,157,0,0.6)]"></div>
-      <div className="flex-1 bg-secondary-container/50 rounded-sm"></div>
-      <div className="flex-1 bg-white/10 rounded-sm"></div>
+      {Array.from({ length: 5 }).map((_, index) => (
+      <div key={`fuel-${index}`} className={`flex-1 ${index < fuelCells ? "bg-secondary-container shadow-[0_0_8px_rgba(254,157,0,0.6)]" : "bg-white/10"} rounded-sm`}></div>
+      ))}
       </div>
       </div>
       {/* Shields Bar */}
@@ -119,19 +155,17 @@ export function GameplayStarharborLite({ actions, runtime }: GameplayStarharborL
       <span className="font-label-mono text-label-mono text-primary flex items-center gap-1">
       <Shield className="text-sm" aria-hidden={true} focusable="false" /> SHIELDS
                       </span>
-      <span className="font-label-mono text-label-mono text-primary">100%</span>
+      <span className="font-label-mono text-label-mono text-primary">{shields}%</span>
       </div>
       <div className="flex gap-1 h-2">
-      <div className="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
-      <div className="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
-      <div className="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
-      <div className="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
-      <div className="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
+      {Array.from({ length: 5 }).map((_, index) => (
+      <div key={`shield-${index}`} className={`flex-1 ${index < shieldCells ? "bg-surface-tint shadow-[0_0_8px_rgba(0,219,231,0.6)]" : "bg-white/10"} rounded-sm`}></div>
+      ))}
       </div>
       </div>
       </div>
       {/* Pause / Start Overlay */}
-      <div className="absolute inset-0 z-[100] bg-surface/70 backdrop-blur-[20px] flex flex-col items-center justify-center border border-outline-variant/30 hidden" id="pauseOverlay">
+      <div className={`absolute inset-0 z-[100] bg-surface/70 backdrop-blur-[20px] flex flex-col items-center justify-center border border-outline-variant/30 ${runtime?.paused ? "" : "hidden"}`} id="pauseOverlay">
       <h2 className="font-headline-lg text-headline-lg md:text-[64px] md:leading-[72px] text-primary mb-margin-desktop drop-shadow-[0_0_12px_rgba(0,219,231,0.8)] tracking-widest">SYSTEM PAUSED</h2>
       <button className="group relative px-8 py-4 bg-transparent border border-surface-tint text-surface-tint font-label-mono text-label-mono text-lg uppercase tracking-widest hover:bg-surface-tint/20 transition-colors duration-300" type="button" data-action-id="resume-flight-3" onClick={actions?.["resume-flight-3"]}>
       <span className="relative z-10 group-hover:drop-shadow-[0_0_8px_rgba(0,219,231,1)]">RESUME FLIGHT</span>

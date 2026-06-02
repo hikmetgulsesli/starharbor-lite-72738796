@@ -5,6 +5,9 @@ import {
   type GameSettingsStarharborLiteActionId,
   type GameplayStarharborLiteActionId,
 } from "./screens";
+import { actPauseGame } from "./features/surf-gameplay/act_pause_game";
+import { actRestartGame } from "./features/surf-gameplay/act_restart_game";
+import { actStartGame } from "./features/surf-gameplay/act_start_game";
 import { useStarHarborLiteGame } from "./features/starharbor-lite/starharbor-lite.store";
 
 export default function App() {
@@ -13,7 +16,7 @@ export default function App() {
 
   const gameplayActions = useMemo<Partial<Record<GameplayStarharborLiteActionId, () => void>>>(
     () => ({
-      "pause-1": game.actions.pause,
+      "pause-1": () => actPauseGame(game.actions.pause),
       "settings-2": () => setSettingsOpen(true),
       "resume-flight-3": game.actions.resume,
     }),
@@ -38,6 +41,9 @@ export default function App() {
   const bridgeActions = useMemo(
     () => ({
       ...game.actions,
+      start: () => actStartGame(game.actions.start),
+      restart: () => actRestartGame(game.actions.restart),
+      pause: () => actPauseGame(game.actions.pause),
       openSettings: () => setSettingsOpen(true),
       closeSettings: () => setSettingsOpen(false),
     }),
@@ -96,13 +102,13 @@ export default function App() {
           if (game.state.paused) {
             game.actions.resume();
           } else {
-            game.actions.pause();
+            actPauseGame(game.actions.pause);
           }
           break;
         case "r":
         case "R":
           event.preventDefault();
-          game.actions.restart();
+          actRestartGame(game.actions.restart);
           break;
       }
     };
