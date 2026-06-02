@@ -1,8 +1,14 @@
-import type { StarHarborLiteActions } from "../features/starharbor-lite/starharbor-lite.store";
+import type { StarHarborBridgeStatus, StarHarborLiteActions } from "../features/starharbor-lite/starharbor-lite.store";
 import type { StarHarborRuntimeState } from "../game/game-runtime";
 
 export interface StarHarborLiteBridge {
-  state: StarHarborRuntimeState & { screen?: "gameplay" | "settings" };
+  state: StarHarborRuntimeState & StarHarborBridgeStatus & { screen?: "gameplay" | "settings" };
+  runtime: StarHarborRuntimeState & StarHarborBridgeStatus & { screen?: "gameplay" | "settings" };
+  status: StarHarborBridgeStatus["status"];
+  progress: number;
+  gameOver: boolean;
+  storageStatus: StarHarborBridgeStatus["storageStatus"];
+  lastError: string | null;
   actions: StarHarborLiteActions & {
     openSettings?: () => void;
     closeSettings?: () => void;

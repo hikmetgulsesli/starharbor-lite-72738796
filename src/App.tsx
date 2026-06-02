@@ -45,9 +45,71 @@ export default function App() {
   );
 
   useEffect(() => {
-    window.app = { state: { ...game.state, screen: settingsOpen ? "settings" : "gameplay" }, actions: bridgeActions };
+    const screen: "settings" | "gameplay" = settingsOpen ? "settings" : "gameplay";
+    const bridgeRuntime = { ...game.state, ...game.bridgeStatus, screen };
+    window.app = {
+      state: bridgeRuntime,
+      runtime: bridgeRuntime,
+      status: game.bridgeStatus.status,
+      progress: game.bridgeStatus.progress,
+      gameOver: game.bridgeStatus.gameOver,
+      storageStatus: game.bridgeStatus.storageStatus,
+      lastError: game.bridgeStatus.lastError,
+      actions: bridgeActions,
+    };
     globalThis.app = window.app;
-  }, [bridgeActions, game.state, settingsOpen]);
+  }, [bridgeActions, game.bridgeStatus, game.state, settingsOpen]);
+
+  useEffect(() => {
+    if (settingsOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      switch (event.key) {
+        case "ArrowLeft":
+        case "a":
+        case "A":
+          event.preventDefault();
+          game.actions.moveLeft();
+          break;
+        case "ArrowRight":
+        case "d":
+        case "D":
+          event.preventDefault();
+          game.actions.moveRight();
+          break;
+        case " ":
+        case "ArrowUp":
+        case "w":
+        case "W":
+          event.preventDefault();
+          game.actions.tick();
+          break;
+        case "p":
+        case "P":
+          event.preventDefault();
+          if (game.state.paused) {
+            game.actions.resume();
+          } else {
+            game.actions.pause();
+          }
+          break;
+        case "r":
+        case "R":
+          event.preventDefault();
+          game.actions.restart();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [game.actions, game.state.paused, settingsOpen]);
 
   return (
     <main data-setfarm-root="starharbor-lite" data-testid="setfarm-app-root" className="min-h-screen bg-surface text-on-surface">

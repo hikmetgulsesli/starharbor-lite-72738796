@@ -10,7 +10,19 @@ import {
 } from "../../game/game-runtime";
 import { loadStarHarborPreferences, saveStarHarborPreferences } from "./starharbor-lite.repo";
 
+export type StarHarborStorageStatus = "ready" | "unavailable" | "error";
+
+export interface StarHarborBridgeStatus {
+  status: "ready" | "paused" | "game-over";
+  progress: number;
+  gameOver: boolean;
+  storageStatus: StarHarborStorageStatus;
+  lastError: string | null;
+}
+
 export interface StarHarborLiteActions {
+  start: () => void;
+  restart: () => void;
   pause: () => void;
   resume: () => void;
   reset: () => void;
@@ -22,8 +34,11 @@ export interface StarHarborLiteActions {
 }
 
 export function useStarHarborLiteGame() {
+  const initialPreferences = useMemo(() => loadStarHarborPreferences(), []);
+  const [storageStatus, setStorageStatus] = useState<StarHarborStorageStatus>(initialPreferences.status);
+  const [lastError, setLastError] = useState<string | null>(initialPreferences.error ?? null);
   const [state, setState] = useState<StarHarborRuntimeState>(() =>
-    createStarHarborInitialState(loadStarHarborPreferences().difficulty),
+    createStarHarborInitialState(initialPreferences.value.difficulty),
   );
 
   const pause = useCallback(() => {
@@ -36,6 +51,10 @@ export function useStarHarborLiteGame() {
 
   const reset = useCallback(() => {
     setState((current) => createStarHarborInitialState(current.difficulty));
+  }, []);
+
+  const start = useCallback(() => {
+    setState((current) => ({ ...current, paused: false, lastEvent: "started" }));
   }, []);
 
   const moveLeft = useCallback(() => {
@@ -56,7 +75,9 @@ export function useStarHarborLiteGame() {
 
   const savePreferences = useCallback(() => {
     setState((current) => {
-      saveStarHarborPreferences({ difficulty: current.difficulty });
+      const saved = saveStarHarborPreferences({ difficulty: current.difficulty });
+      setStorageStatus(saved.status);
+      setLastError(saved.error ?? null);
       return { ...current, lastEvent: "preferences-saved" };
     });
   }, []);
@@ -71,6 +92,8 @@ export function useStarHarborLiteGame() {
 
   const actions = useMemo<StarHarborLiteActions>(
     () => ({
+      start,
+      restart: reset,
       pause,
       resume,
       reset,
@@ -80,12 +103,25 @@ export function useStarHarborLiteGame() {
       setDifficulty,
       savePreferences,
     }),
-    [moveLeft, moveRight, pause, reset, resume, savePreferences, setDifficulty, tick],
+    [moveLeft, moveRight, pause, reset, resume, savePreferences, setDifficulty, start, tick],
   );
+
+  const bridgeStatus = useMemo<StarHarborBridgeStatus>(() => {
+    const gameOver = state.energy <= 0 || state.lives <= 0;
+
+    return {
+      status: gameOver ? "game-over" : state.paused ? "paused" : "ready",
+      progress: state.tick,
+      gameOver,
+      storageStatus,
+      lastError,
+    };
+  }, [lastError, state.energy, state.lives, state.paused, state.tick, storageStatus]);
 
   return {
     state,
     runtime: toGameplayRuntime(state),
+    bridgeStatus,
     actions,
   };
 }
