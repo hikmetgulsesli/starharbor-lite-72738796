@@ -152,10 +152,10 @@ export default function App() {
   }, [game.actions, game.state.paused, settingsOpen]);
 
   return (
-    <main data-setfarm-root="starharbor-lite" data-testid="setfarm-app-root" className="min-h-screen bg-surface text-on-surface">
+    <main data-setfarm-root="starharbor-lite" data-testid="setfarm-app-root" className="relative min-h-screen w-full max-w-full overflow-hidden bg-surface text-on-surface">
       <GameplayStarharborLite actions={gameplayActions} runtime={game.runtime} />
       {settingsOpen ? (
-        <div className="fixed inset-0 z-50 bg-surface/80">
+        <div className="fixed inset-0 z-50 max-w-full overflow-x-hidden bg-surface/80">
           <GameSettingsStarharborLite actions={settingsActions} />
         </div>
       ) : null}
