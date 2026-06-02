@@ -1,0 +1,135 @@
+[
+  {
+    "screenId": "09800fdaf17f48fcb18e9ff2badddc75",
+    "screenTitle": "Game Settings - StarHarbor Lite",
+    "deviceType": "DESKTOP",
+    "elements": [
+      {
+        "type": "button",
+        "label": "close",
+        "line": 134
+      },
+      {
+        "type": "button",
+        "label": "ROOKIE",
+        "line": 147
+      },
+      {
+        "type": "button",
+        "label": "PILOT",
+        "line": 150
+      },
+      {
+        "type": "button",
+        "label": "ACE",
+        "line": 153
+      },
+      {
+        "type": "button",
+        "label": "RETURN TO GAME",
+        "line": 266
+      },
+      {
+        "type": "button",
+        "label": "PREFERENCES",
+        "line": 269
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 171
+      }
+    ],
+    "navigation": [],
+    "buttons": [
+      {
+        "type": "button",
+        "label": "close",
+        "line": 134
+      },
+      {
+        "type": "button",
+        "label": "ROOKIE",
+        "line": 147
+      },
+      {
+        "type": "button",
+        "label": "PILOT",
+        "line": 150
+      },
+      {
+        "type": "button",
+        "label": "ACE",
+        "line": 153
+      },
+      {
+        "type": "button",
+        "label": "RETURN TO GAME",
+        "line": 266
+      },
+      {
+        "type": "button",
+        "label": "PREFERENCES",
+        "line": 269
+      }
+    ],
+    "inputs": [
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 171
+      }
+    ],
+    "hardcodedData": [],
+    "totalInteractive": 7,
+    "requiresRouter": false,
+    "requiresDragDrop": false
+  },
+  {
+    "screenId": "5af64225a9e04ce1b2c4e650db871c32",
+    "screenTitle": "Gameplay - StarHarbor Lite",
+    "deviceType": "DESKTOP",
+    "elements": [
+      {
+        "type": "button",
+        "label": "pause",
+        "line": 149
+      },
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 152
+      },
+      {
+        "type": "button",
+        "label": "RESUME FLIGHT",
+        "line": 227
+      }
+    ],
+    "navigation": [],
+    "buttons": [
+      {
+        "type": "button",
+        "label": "pause",
+        "line": 149
+      },
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 152
+      },
+      {
+        "type": "button",
+        "label": "RESUME FLIGHT",
+        "line": 227
+      }
+    ],
+    "inputs": [],
+    "hardcodedData": [],
+    "totalInteractive": 3,
+    "requiresRouter": false,
+    "requiresDragDrop": false
+  }
+]
