@@ -156,7 +156,21 @@ export default function App() {
       <GameplayStarharborLite actions={gameplayActions} runtime={game.runtime} />
       {settingsOpen ? (
         <div className="fixed inset-0 z-50 max-w-full overflow-x-hidden bg-surface/80">
-          <GameSettingsStarharborLite actions={settingsActions} />
+          <style>{`
+            [data-starharbor-settings] > * {
+              box-sizing: border-box;
+              width: min(100%, calc(100vw - 32px)) !important;
+              margin-left: auto !important;
+              margin-right: auto !important;
+            }
+
+            [data-starharbor-settings] .scale-105 {
+              transform: none !important;
+            }
+          `}</style>
+          <div data-starharbor-settings className="h-full w-full max-w-full overflow-x-hidden">
+            <GameSettingsStarharborLite actions={settingsActions} />
+          </div>
         </div>
       ) : null}
     </main>
