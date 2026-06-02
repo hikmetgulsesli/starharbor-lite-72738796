@@ -7,6 +7,7 @@
 // 3. Wire interactive controls through the typed actions prop
 // 4. Replace placeholder data with props/state
 
+import { useState } from "react";
 import { Flame, Gauge, Keyboard, Save, Settings, Volume2, X } from "lucide-react";
 
 
@@ -18,6 +19,21 @@ export interface GameSettingsStarharborLiteProps {
 }
 
 export function GameSettingsStarharborLite({ actions }: GameSettingsStarharborLiteProps) {
+  const [selectedDifficulty, setSelectedDifficulty] = useState<"rookie" | "pilot" | "ace">("pilot");
+  const [hyperdriveOverride, setHyperdriveOverride] = useState(true);
+  const [preferencesStatus, setPreferencesStatus] = useState("Ready");
+
+  const chooseDifficulty = (difficulty: "rookie" | "pilot" | "ace", actionId: GameSettingsStarharborLiteActionId) => {
+    setSelectedDifficulty(difficulty);
+    setPreferencesStatus(`${difficulty.toUpperCase()} selected`);
+    actions?.[actionId]?.();
+  };
+
+  const savePreferences = () => {
+    setPreferencesStatus(hyperdriveOverride ? "Validated: hyperdrive override enabled" : "Validated: hyperdrive override disabled");
+    actions?.["save-preferences-6"]?.();
+  };
+
   return (
     <>
       {/* Blurred Game Background Overlay */}
@@ -48,13 +64,13 @@ export function GameSettingsStarharborLite({ actions }: GameSettingsStarharborLi
                           SIMULATION DIFFICULTY
                       </h2>
       <div className="grid grid-cols-3 gap-unit md:gap-2 bg-surface-container/50 p-1 border border-outline-variant/30 rounded">
-      <button className="py-3 px-4 rounded border border-transparent text-on-surface-variant font-label-mono text-label-mono text-center hover:bg-surface-variant/40 transition-colors" type="button" data-action-id="rookie-2" onClick={actions?.["rookie-2"]}>
+      <button className="py-3 px-4 rounded border border-transparent text-on-surface-variant font-label-mono text-label-mono text-center hover:bg-surface-variant/40 transition-colors" type="button" data-action-id="rookie-2" aria-pressed={selectedDifficulty === "rookie"} onClick={() => chooseDifficulty("rookie", "rookie-2")}>
                               ROOKIE
                           </button>
-      <button className="py-3 px-4 rounded border border-primary bg-primary/10 text-primary font-label-mono text-label-mono text-center shadow-[0_0_10px_rgba(0,219,231,0.2)] transition-colors" type="button" data-action-id="pilot-3" onClick={actions?.["pilot-3"]}>
+      <button className="py-3 px-4 rounded border border-primary bg-primary/10 text-primary font-label-mono text-label-mono text-center shadow-[0_0_10px_rgba(0,219,231,0.2)] transition-colors" type="button" data-action-id="pilot-3" aria-pressed={selectedDifficulty === "pilot"} onClick={() => chooseDifficulty("pilot", "pilot-3")}>
                               PILOT
                           </button>
-      <button className="py-3 px-4 rounded border border-transparent text-on-surface-variant font-label-mono text-label-mono text-center hover:bg-surface-variant/40 transition-colors" type="button" data-action-id="ace-4" onClick={actions?.["ace-4"]}>
+      <button className="py-3 px-4 rounded border border-transparent text-on-surface-variant font-label-mono text-label-mono text-center hover:bg-surface-variant/40 transition-colors" type="button" data-action-id="ace-4" aria-pressed={selectedDifficulty === "ace"} onClick={() => chooseDifficulty("ace", "ace-4")}>
                               ACE
                           </button>
       </div>
@@ -72,7 +88,10 @@ export function GameSettingsStarharborLite({ actions }: GameSettingsStarharborLi
       <span className="font-body-md text-body-md text-on-surface">Hyperdrive Override</span>
       {/* Custom Toggle */}
       <div className="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in cursor-pointer">
-      <input defaultChecked={true} className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-surface border-2 border-primary appearance-none cursor-pointer translate-x-6 shadow-[0_0_8px_rgba(0,219,231,0.5)]" id="speed-toggle" name="toggle" type="checkbox" />
+      <input checked={hyperdriveOverride} className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-surface border-2 border-primary appearance-none cursor-pointer translate-x-6 shadow-[0_0_8px_rgba(0,219,231,0.5)]" id="speed-toggle" name="toggle" type="checkbox" onChange={(event) => {
+        setHyperdriveOverride(event.target.checked);
+        setPreferencesStatus(event.target.checked ? "Hyperdrive override enabled" : "Hyperdrive override disabled");
+      }} />
       <label className="toggle-label block overflow-hidden h-6 rounded-full bg-primary/30 cursor-pointer border border-primary/50" htmlFor="speed-toggle"></label>
       </div>
       </div>
@@ -170,7 +189,8 @@ export function GameSettingsStarharborLite({ actions }: GameSettingsStarharborLi
       <button className="px-6 py-3 rounded border border-outline-variant text-on-surface font-label-mono text-label-mono hover:bg-surface-variant/50 hover:text-white transition-colors focus:outline-none" type="button" data-action-id="return-to-game-5" onClick={actions?.["return-to-game-5"]}>
                       RETURN TO GAME
                   </button>
-      <button className="px-8 py-3 rounded border border-primary bg-primary/10 text-primary font-label-mono text-label-mono hover:bg-primary/20 shadow-[0_0_15px_rgba(0,219,231,0.3)] hover:shadow-[0_0_20px_rgba(0,219,231,0.6)] transition-colors focus:outline-none flex items-center justify-center gap-2" type="button" data-action-id="save-preferences-6" onClick={actions?.["save-preferences-6"]}>
+      <span className="font-label-mono text-label-mono text-on-surface-variant" aria-live="polite">{preferencesStatus}</span>
+      <button className="px-8 py-3 rounded border border-primary bg-primary/10 text-primary font-label-mono text-label-mono hover:bg-primary/20 shadow-[0_0_15px_rgba(0,219,231,0.3)] hover:shadow-[0_0_20px_rgba(0,219,231,0.6)] transition-colors focus:outline-none flex items-center justify-center gap-2" type="button" data-action-id="save-preferences-6" onClick={savePreferences}>
       <Save className="text-sm" aria-hidden={true} focusable="false" />
                       SAVE PREFERENCES
                   </button>
