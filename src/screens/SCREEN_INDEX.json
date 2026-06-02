@@ -1,0 +1,78 @@
+[
+  {
+    "screenId": "09800fdaf17f48fcb18e9ff2badddc75",
+    "title": "Game Settings - StarHarbor Lite",
+    "componentName": "GameSettingsStarharborLite",
+    "file": "src/screens/GameSettingsStarharborLite.tsx",
+    "buttons": 6,
+    "inputs": 1,
+    "links": 0,
+    "actions": [
+      {
+        "id": "close-1",
+        "kind": "button",
+        "label": "Close",
+        "index": 0
+      },
+      {
+        "id": "rookie-2",
+        "kind": "button",
+        "label": "ROOKIE",
+        "index": 1
+      },
+      {
+        "id": "pilot-3",
+        "kind": "button",
+        "label": "PILOT",
+        "index": 2
+      },
+      {
+        "id": "ace-4",
+        "kind": "button",
+        "label": "ACE",
+        "index": 3
+      },
+      {
+        "id": "return-to-game-5",
+        "kind": "button",
+        "label": "RETURN TO GAME",
+        "index": 4
+      },
+      {
+        "id": "save-preferences-6",
+        "kind": "button",
+        "label": "SAVE PREFERENCES",
+        "index": 5
+      }
+    ]
+  },
+  {
+    "screenId": "5af64225a9e04ce1b2c4e650db871c32",
+    "title": "Gameplay - StarHarbor Lite",
+    "componentName": "GameplayStarharborLite",
+    "file": "src/screens/GameplayStarharborLite.tsx",
+    "buttons": 3,
+    "inputs": 0,
+    "links": 0,
+    "actions": [
+      {
+        "id": "pause-1",
+        "kind": "button",
+        "label": "Pause",
+        "index": 0
+      },
+      {
+        "id": "settings-2",
+        "kind": "button",
+        "label": "Settings",
+        "index": 1
+      },
+      {
+        "id": "resume-flight-3",
+        "kind": "button",
+        "label": "RESUME FLIGHT",
+        "index": 2
+      }
+    ]
+  }
+]
