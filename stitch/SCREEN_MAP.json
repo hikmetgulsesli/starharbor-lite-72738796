@@ -1,0 +1,20 @@
+[
+  {
+    "screenId": "09800fdaf17f48fcb18e9ff2badddc75",
+    "name": "Game Settings - StarHarbor Lite",
+    "type": "settings",
+    "description": "Game Settings - StarHarbor Lite screen",
+    "surfaceIds": [
+      "SURF_GAME_SETTINGS"
+    ]
+  },
+  {
+    "screenId": "5af64225a9e04ce1b2c4e650db871c32",
+    "name": "Gameplay - StarHarbor Lite",
+    "type": "game",
+    "description": "Gameplay - StarHarbor Lite screen",
+    "surfaceIds": [
+      "SURF_GAMEPLAY"
+    ]
+  }
+]

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StarHarbor Lite - Gameplay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@500;700&amp;family=Space+Grotesk:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#0e141a",
+                        "on-secondary-container": "#663c00",
+                        "on-tertiary-container": "#5d5f67",
+                        "secondary-fixed": "#ffdcbb",
+                        "on-error": "#690005",
+                        "surface-bright": "#333a40",
+                        "tertiary-fixed-dim": "#c4c6cf",
+                        "background": "#0e141a",
+                        "on-secondary-fixed-variant": "#673d00",
+                        "tertiary-fixed": "#e1e2eb",
+                        "surface-container-highest": "#2f353c",
+                        "surface-container-lowest": "#080f14",
+                        "on-tertiary": "#2e3037",
+                        "tertiary": "#f6f6ff",
+                        "primary": "#e1fdff",
+                        "outline-variant": "#3a494b",
+                        "surface-container": "#1a2026",
+                        "on-secondary-fixed": "#2c1700",
+                        "on-secondary": "#482900",
+                        "surface-dim": "#0e141a",
+                        "on-background": "#dde3eb",
+                        "on-tertiary-fixed-variant": "#44474e",
+                        "surface-container-high": "#242b31",
+                        "secondary-container": "#fe9d00",
+                        "on-primary-fixed": "#002022",
+                        "on-tertiary-fixed": "#191c22",
+                        "surface-tint": "#00dbe7",
+                        "surface-variant": "#2f353c",
+                        "inverse-on-surface": "#2b3137",
+                        "tertiary-container": "#d9dae3",
+                        "outline": "#849495",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#ffb869",
+                        "primary-container": "#00f2ff",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed": "#74f5ff",
+                        "on-primary": "#00363a",
+                        "inverse-primary": "#00696f",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-surface-variant": "#b9cacb",
+                        "on-primary-container": "#006a71",
+                        "on-surface": "#dde3eb",
+                        "primary-fixed-dim": "#00dbe7",
+                        "inverse-surface": "#dde3eb",
+                        "error-container": "#93000a",
+                        "secondary": "#ffc384",
+                        "surface-container-low": "#161c22"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "hud-safe-area": "24px",
+                        "gutter": "16px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display-score": ["JetBrains Mono"],
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-score": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .hud-glow {
+            filter: drop-shadow(0 0 8px rgba(0, 219, 231, 0.6));
+        }
+        .warning-glow {
+            filter: drop-shadow(0 0 8px rgba(254, 157, 0, 0.6));
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .asteroid {
+            animation: float 20s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-screen w-screen overflow-hidden relative font-body-md text-body-md selection:bg-surface-tint selection:text-on-primary">
+<!-- Background Space Field -->
+<div class="absolute inset-0 z-0 bg-surface-container-lowest" style="background-image: radial-gradient(circle at 50% 50%, rgba(0, 219, 231, 0.05) 0%, transparent 60%);">
+<!-- Asteroids & Shuttle Placeholder -->
+<div class="absolute inset-0 opacity-80" data-alt="A deep space starfield with glowing nebulas in dark blues and cyan. High-octane, futuristic minimalist aesthetic with a high-tech starship vibe. Deep translucent layers maintain a sense of depth while ensuring critical data remains legible. Vibrant neon accents provide a glowing digital aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuATSOaZOa8gflLcNXAFH7_ubCRanBMl4rDLMTBEImP2HUf5aiIl2xjE3yJOT0H8Vb4Swc4nzvSfgwvAR1I3mKPwtfDR_2ix1o81SVGMCff1ntqYqOW1qk2kSeu2ytJ4LL46jLQbSTs_VqKw1D7efhnAaTZOcJ-wIWA-LJsCDWJ09P2XxXoN8CsadjyqvlVIjmg8JTlSYqdR9HBGXzPPUZtW6EbsM4TYmQ4nMZWZYIuxSxAvDBbM7zN0rzVCMGyKYJZ-OoNY6IlidSg'); background-size: cover; background-position: center; mix-blend-mode: screen;">
+</div>
+<!-- Drifting Asteroids (CSS animated representations) -->
+<div class="asteroid absolute top-1/4 left-1/4 w-32 h-32 bg-surface-variant/40 backdrop-blur-md rounded-full border border-outline-variant/30 blur-[2px]"></div>
+<div class="asteroid absolute bottom-1/3 right-1/4 w-48 h-48 bg-surface-container/50 backdrop-blur-sm rounded-full border border-surface-tint/10" style="animation-delay: -5s; animation-duration: 25s;"></div>
+<div class="asteroid absolute top-1/2 right-1/3 w-16 h-16 bg-surface-bright/30 backdrop-blur-lg rounded-full border border-outline-variant/50" style="animation-delay: -12s; animation-duration: 15s;"></div>
+<!-- Player Shuttle (Center) -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-12 h-16 flex flex-col items-center justify-center hud-glow">
+<div class="w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-b-[32px] border-b-surface-tint"></div>
+<div class="w-8 h-4 bg-primary/80 mt-1 rounded-sm blur-[1px]"></div>
+<div class="w-4 h-6 bg-primary-container blur-[4px] mt-1"></div> <!-- Thruster flame -->
+</div>
+<!-- Beacon -->
+<div class="absolute top-1/4 right-1/4 z-10 flex flex-col items-center">
+<div class="w-4 h-4 bg-primary rounded-full animate-pulse hud-glow"></div>
+<span class="font-label-mono text-label-mono text-primary mt-unit">BEACON-X</span>
+</div>
+</div>
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-hud-safe-area pt-hud-safe-area bg-transparent">
+<div class="flex items-center gap-gutter">
+<h1 class="font-headline-lg text-headline-lg md:hidden text-primary drop-shadow-[0_0_8px_rgba(0,219,231,0.8)]">STARHARBOR LITE</h1>
+<h1 class="font-headline-lg text-headline-lg hidden md:block text-primary drop-shadow-[0_0_8px_rgba(0,219,231,0.8)]">STARHARBOR LITE</h1>
+</div>
+<div class="flex items-center gap-gutter">
+<!-- Score Readout -->
+<div class="font-display-score text-display-score text-surface-tint drop-shadow-[0_0_8px_rgba(0,219,231,0.6)] animate-pulse">
+                12,500
+            </div>
+<div class="flex gap-unit">
+<button class="p-2 text-primary hover:text-primary-container transition-colors active:scale-95 duration-75">
+<span class="material-symbols-outlined" data-icon="pause">pause</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Hidden on Mobile, Visible on Web as HUD elements) -->
+<!-- In gameplay, SideNav is suppressed as per guidelines "Linear/Transactional or Task-Focused", but keeping HUD elements mapped to the grid -->
+<div class="hidden md:flex fixed left-0 top-1/2 -translate-y-1/2 h-auto z-[60] flex-col gap-gutter px-hud-safe-area">
+<!-- Telemetry / Status -->
+<div class="bg-surface/80 backdrop-blur-xl border border-outline-variant/30 rounded-lg p-unit shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col gap-unit p-unit">
+<div class="font-label-mono text-label-mono text-on-surface-variant uppercase text-xs">Distance</div>
+<div class="font-label-mono text-label-mono text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="straighten">straighten</span>
+                     450m
+                 </div>
+</div>
+</div>
+</div>
+<!-- BottomNavBar (Mobile HUD Elements) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-between items-end px-hud-safe-area pb-hud-safe-area bg-gradient-to-t from-surface-container-lowest to-transparent md:hidden">
+<!-- Fuel Status -->
+<div class="flex flex-col items-center gap-unit warning-glow">
+<div class="w-12 h-12 rounded-full border border-secondary-container bg-surface/50 backdrop-blur-md flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container" data-icon="local_gas_station">local_gas_station</span>
+</div>
+<span class="font-label-mono text-label-mono text-secondary-container">65%</span>
+</div>
+<!-- Distance (Mobile) -->
+<div class="flex flex-col items-center gap-unit text-primary">
+<div class="w-12 h-12 rounded-full border border-surface-tint/30 bg-surface/50 backdrop-blur-md flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="straighten">straighten</span>
+</div>
+<span class="font-label-mono text-label-mono text-primary">450m</span>
+</div>
+</nav>
+<!-- Desktop Bottom HUD (Fuel & Shields) -->
+<div class="hidden md:flex fixed bottom-0 left-0 w-full z-50 justify-between items-end px-hud-safe-area pb-hud-safe-area bg-transparent pointer-events-none">
+<!-- Fuel Bar -->
+<div class="w-64 bg-surface/80 backdrop-blur-xl border border-outline-variant/30 rounded-lg p-unit shadow-[0_0_20px_rgba(0,0,0,0.5)] pointer-events-auto">
+<div class="flex justify-between items-center mb-unit">
+<span class="font-label-mono text-label-mono text-secondary-container flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="local_gas_station">local_gas_station</span> FUEL
+                </span>
+<span class="font-label-mono text-label-mono text-secondary-container">65%</span>
+</div>
+<div class="flex gap-1 h-2">
+<div class="flex-1 bg-secondary-container rounded-sm shadow-[0_0_8px_rgba(254,157,0,0.6)]"></div>
+<div class="flex-1 bg-secondary-container rounded-sm shadow-[0_0_8px_rgba(254,157,0,0.6)]"></div>
+<div class="flex-1 bg-secondary-container rounded-sm shadow-[0_0_8px_rgba(254,157,0,0.6)]"></div>
+<div class="flex-1 bg-secondary-container/50 rounded-sm"></div>
+<div class="flex-1 bg-white/10 rounded-sm"></div>
+</div>
+</div>
+<!-- Shields Bar -->
+<div class="w-64 bg-surface/80 backdrop-blur-xl border border-outline-variant/30 rounded-lg p-unit shadow-[0_0_20px_rgba(0,0,0,0.5)] pointer-events-auto">
+<div class="flex justify-between items-center mb-unit">
+<span class="font-label-mono text-label-mono text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="shield">shield</span> SHIELDS
+                </span>
+<span class="font-label-mono text-label-mono text-primary">100%</span>
+</div>
+<div class="flex gap-1 h-2">
+<div class="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
+<div class="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
+<div class="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
+<div class="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
+<div class="flex-1 bg-surface-tint rounded-sm shadow-[0_0_8px_rgba(0,219,231,0.6)]"></div>
+</div>
+</div>
+</div>
+<!-- Pause / Start Overlay -->
+<div class="absolute inset-0 z-[100] bg-surface/70 backdrop-blur-[20px] flex flex-col items-center justify-center border border-outline-variant/30 hidden" id="pauseOverlay">
+<h2 class="font-headline-lg text-headline-lg md:text-[64px] md:leading-[72px] text-primary mb-margin-desktop drop-shadow-[0_0_12px_rgba(0,219,231,0.8)] tracking-widest">SYSTEM PAUSED</h2>
+<button class="group relative px-8 py-4 bg-transparent border border-surface-tint text-surface-tint font-label-mono text-label-mono text-lg uppercase tracking-widest hover:bg-surface-tint/20 transition-all duration-300" onclick="togglePause()">
+<span class="relative z-10 group-hover:drop-shadow-[0_0_8px_rgba(0,219,231,1)]">RESUME FLIGHT</span>
+<div class="absolute inset-0 border border-surface-tint opacity-50 scale-105 group-hover:scale-100 transition-transform duration-300 pointer-events-none"></div>
+</button>
+<div class="mt-margin-desktop font-label-mono text-label-mono text-on-surface-variant flex items-center gap-2">
+            PRESS <kbd class="px-2 py-1 bg-surface-container border border-outline-variant/50 rounded text-surface-tint">P</kbd> TO PAUSE/RESUME
+        </div>
+</div>
+<script>
+        let isPaused = false;
+        const overlay = document.getElementById('pauseOverlay');
+
+        function togglePause() {
+            isPaused = !isPaused;
+            if(isPaused) {
+                overlay.classList.remove('hidden');
+                // In a real game, pause logic here
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key.toLowerCase() === 'p') {
+                togglePause();
+            }
+        });
+    </script>
+</body></html>

@@ -1,0 +1,24 @@
+[
+  {
+    "screenId": "09800fdaf17f48fcb18e9ff2badddc75",
+    "title": "Game Settings - StarHarbor Lite",
+    "htmlFile": "09800fdaf17f48fcb18e9ff2badddc75.html",
+    "deviceType": "DESKTOP",
+    "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2M3ODZlZDU1NTQwMzQ2ZGRhM2U2ZDY3YTZiYmZlMjI1EgsSBxCN19Wi9xcYAZIBIwoKcHJvamVjdF9pZBIVQhMxODc5NDgxODc1MTI2NDI2NDE2&filename=&opi=96797242",
+    "localHtml": "/Users/setrox/projects/starharbor-lite-72738796/stitch/09800fdaf17f48fcb18e9ff2badddc75.html",
+    "surfaceIds": [
+      "SURF_GAME_SETTINGS"
+    ]
+  },
+  {
+    "screenId": "5af64225a9e04ce1b2c4e650db871c32",
+    "title": "Gameplay - StarHarbor Lite",
+    "htmlFile": "5af64225a9e04ce1b2c4e650db871c32.html",
+    "deviceType": "DESKTOP",
+    "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzI1ZjkyYWUzMGI0NTQyNzliNDUzZTdkOGM2ZGMzZTI0EgsSBxCN19Wi9xcYAZIBIwoKcHJvamVjdF9pZBIVQhMxODc5NDgxODc1MTI2NDI2NDE2&filename=&opi=96797242",
+    "localHtml": "/Users/setrox/projects/starharbor-lite-72738796/stitch/5af64225a9e04ce1b2c4e650db871c32.html",
+    "surfaceIds": [
+      "SURF_GAMEPLAY"
+    ]
+  }
+]
