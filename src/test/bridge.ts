@@ -15,12 +15,25 @@ export interface StarHarborLiteBridge {
   };
 }
 
+export interface StarHarborLiteSmokeSnapshot {
+  story: "starharbor-lite";
+  ready: boolean;
+  screen: "gameplay" | "settings";
+  status: StarHarborBridgeStatus["status"];
+  progress: number;
+  gameOver: boolean;
+  storageStatus: StarHarborBridgeStatus["storageStatus"];
+  lastError: string | null;
+}
+
 declare global {
   interface Window {
     app: StarHarborLiteBridge;
+    setfarmSmoke: StarHarborLiteSmokeSnapshot;
   }
 
   var app: StarHarborLiteBridge;
+  var setfarmSmoke: StarHarborLiteSmokeSnapshot;
 }
 
 export {};

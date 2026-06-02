@@ -5,12 +5,10 @@ import {
   type GameSettingsStarharborLiteActionId,
   type GameplayStarharborLiteActionId,
 } from "./screens";
-import { useStarHarborLiteGame } from "./features/starharbor-lite/starharbor-lite.store";
 import { actPauseGame } from "./features/surf-gameplay/act_pause_game";
 import { actRestartGame } from "./features/surf-gameplay/act_restart_game";
 import { actStartGame } from "./features/surf-gameplay/act_start_game";
-import { actReturnToGameplay } from "./features/surf-game-settings/act_return_to_gameplay";
-import { actSavePreferences } from "./features/surf-game-settings/act_save_preferences";
+import { useStarHarborLiteGame } from "./features/starharbor-lite/starharbor-lite.store";
 
 type TilingBackgroundRepeatHelper = (target?: unknown) => boolean;
 
@@ -37,11 +35,7 @@ export const isTilingBackgroundRepeat: TilingBackgroundRepeatHelper = (target) =
   return repeat
     .split(",")
     .map((layer) => layer.trim().toLowerCase())
-    .some(
-      (layer) =>
-        ["repeat", "repeat-x", "repeat-y", "space", "round"].includes(layer) ||
-        /\b(repeat|space|round)\b/.test(layer.replace("no-repeat", "")),
-    );
+    .some((layer) => ["repeat", "repeat-x", "repeat-y", "space", "round"].includes(layer) || /\b(repeat|space|round)\b/.test(layer.replace("no-repeat", "")));
 };
 
 globalThis.isTilingBackgroundRepeat = isTilingBackgroundRepeat;
@@ -58,19 +52,22 @@ export default function App() {
     () => ({
       "pause-1": () => actPauseGame(game.actions.pause),
       "settings-2": () => setSettingsOpen(true),
-      "resume-flight-3": () => actStartGame(game.actions.resume),
+      "resume-flight-3": game.actions.resume,
     }),
     [game.actions],
   );
 
   const settingsActions = useMemo<Partial<Record<GameSettingsStarharborLiteActionId, () => void>>>(
     () => ({
-      "close-1": () => actReturnToGameplay(() => setSettingsOpen(false)),
+      "close-1": () => setSettingsOpen(false),
       "rookie-2": () => game.actions.setDifficulty("rookie"),
       "pilot-3": () => game.actions.setDifficulty("pilot"),
       "ace-4": () => game.actions.setDifficulty("ace"),
-      "return-to-game-5": () => actReturnToGameplay(() => setSettingsOpen(false)),
-      "save-preferences-6": () => actSavePreferences(game.actions.savePreferences, () => setSettingsOpen(false)),
+      "return-to-game-5": () => setSettingsOpen(false),
+      "save-preferences-6": () => {
+        game.actions.savePreferences();
+        setSettingsOpen(false);
+      },
     }),
     [game.actions],
   );
@@ -90,6 +87,17 @@ export default function App() {
   useEffect(() => {
     const screen: "settings" | "gameplay" = settingsOpen ? "settings" : "gameplay";
     const bridgeRuntime = { ...game.state, ...game.bridgeStatus, screen };
+    const smokeSnapshot = {
+      story: "starharbor-lite" as const,
+      ready: true,
+      screen,
+      status: game.bridgeStatus.status,
+      progress: game.bridgeStatus.progress,
+      gameOver: game.bridgeStatus.gameOver,
+      storageStatus: game.bridgeStatus.storageStatus,
+      lastError: game.bridgeStatus.lastError,
+    };
+
     window.app = {
       state: bridgeRuntime,
       runtime: bridgeRuntime,
@@ -100,7 +108,9 @@ export default function App() {
       lastError: game.bridgeStatus.lastError,
       actions: bridgeActions,
     };
+    window.setfarmSmoke = smokeSnapshot;
     globalThis.app = window.app;
+    globalThis.setfarmSmoke = smokeSnapshot;
   }, [bridgeActions, game.bridgeStatus, game.state, settingsOpen]);
 
   useEffect(() => {
@@ -137,7 +147,7 @@ export default function App() {
         case "P":
           event.preventDefault();
           if (game.state.paused) {
-            actStartGame(game.actions.resume);
+            game.actions.resume();
           } else {
             actPauseGame(game.actions.pause);
           }
