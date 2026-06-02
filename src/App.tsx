@@ -10,6 +10,40 @@ import { actRestartGame } from "./features/surf-gameplay/act_restart_game";
 import { actStartGame } from "./features/surf-gameplay/act_start_game";
 import { useStarHarborLiteGame } from "./features/starharbor-lite/starharbor-lite.store";
 
+type TilingBackgroundRepeatHelper = (target?: unknown) => boolean;
+
+declare global {
+  var isTilingBackgroundRepeat: TilingBackgroundRepeatHelper | undefined;
+
+  interface Window {
+    isTilingBackgroundRepeat?: TilingBackgroundRepeatHelper;
+  }
+}
+
+export const isTilingBackgroundRepeat: TilingBackgroundRepeatHelper = (target) => {
+  const repeat =
+    typeof target === "string"
+      ? target
+      : target instanceof Element
+        ? window.getComputedStyle(target).backgroundRepeat
+        : target instanceof CSSStyleDeclaration
+          ? target.backgroundRepeat
+          : typeof target === "object" && target !== null && "backgroundRepeat" in target
+            ? String(target.backgroundRepeat ?? "")
+            : "";
+
+  return repeat
+    .split(",")
+    .map((layer) => layer.trim().toLowerCase())
+    .some((layer) => ["repeat", "repeat-x", "repeat-y", "space", "round"].includes(layer) || /\b(repeat|space|round)\b/.test(layer.replace("no-repeat", "")));
+};
+
+globalThis.isTilingBackgroundRepeat = isTilingBackgroundRepeat;
+
+if (typeof window !== "undefined") {
+  window.isTilingBackgroundRepeat = isTilingBackgroundRepeat;
+}
+
 export default function App() {
   const game = useStarHarborLiteGame();
   const [settingsOpen, setSettingsOpen] = useState(false);
